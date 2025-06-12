@@ -1,0 +1,7 @@
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/ExpenseTrackerApplication.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/service/ExpenseService.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/config/SecurityConfig.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/config/WebConfig.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/controller/ExpenseController.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/model/Expense.java
+/Users/ishaanbajaj/Documents/GitHub/expense-tracker-main/backend/src/main/java/com/example/expensetracker/repository/ExpenseRepository.java
