@@ -23,33 +23,30 @@
         <label>End Date:</label>
         <input v-model="filters.endDate" type="date" />
       </div>
-      <button type="submit">Apply Filters</button>
+      <div class="full-width">
+        <button type="submit">Apply Filters</button>
+      </div>
     </form>
 
-    <hr />
-
-    <div v-if="expenses.length">
-      <table>
-        <thead>
-          <tr>
-            <th>Description</th>
-            <th>Amount</th>
-            <th>Date</th>
-            <th>Category</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="expense in expenses" :key="expense.id">
-            <td>{{ expense.description }}</td>
-            <td>{{ expense.amount }}</td>
-            <td>{{ expense.date }}</td>
-            <td>{{ expense.category }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div v-else>No results found.</div>
+    <table v-if="expenses.length > 0">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="expense in expenses" :key="expense.id">
+          <td>{{ expense.description }}</td>
+          <td>{{ expense.category }}</td>
+          <td>${{ expense.amount.toFixed(2) }}</td>
+          <td>{{ formatDate(expense.date) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p v-else>No results found.</p>
 
     <div class="pagination">
       <button @click="prevPage" :disabled="page === 0">Previous</button>
@@ -60,10 +57,7 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
-  name: 'FilteredExpenseList',
   data() {
     return {
       filters: {
@@ -71,37 +65,32 @@ export default {
         minAmount: '',
         maxAmount: '',
         startDate: '',
-        endDate: '',
+        endDate: ''
       },
       expenses: [],
       page: 0,
       size: 5,
-      totalPages: 0,
+      totalPages: 0
     };
   },
   methods: {
-    fetchExpenses() {
-      const params = {
-        ...this.filters,
+    formatDate(date) {
+      return new Date(date).toLocaleDateString();
+    },
+    async fetchExpenses() {
+      const params = new URLSearchParams({
         page: this.page,
         size: this.size,
-      };
-
-      axios
-        .get('http://localhost:8080/api/expenses', {
-          params,
-          auth: {
-            username: 'admin',
-            password: 'admin',
-          },
-        })
-        .then((res) => {
-          this.expenses = res.data.expenses;
-          this.totalPages = res.data.totalPages;
-        })
-        .catch((err) => {
-          console.error('Error fetching expenses:', err);
-        });
+        ...this.filters
+      });
+      const response = await fetch(`http://localhost:8080/api/expenses?${params.toString()}`, {
+        headers: {
+          Authorization: 'Basic ' + btoa('admin:admin')
+        }
+      });
+      const data = await response.json();
+      this.expenses = data.expenses;
+      this.totalPages = data.totalPages;
     },
     nextPage() {
       if (this.page + 1 < this.totalPages) {
@@ -114,111 +103,83 @@ export default {
         this.page--;
         this.fetchExpenses();
       }
-    },
+    }
   },
   mounted() {
     this.fetchExpenses();
-  },
+  }
 };
 </script>
 
 <style scoped>
 .container {
-  max-width: 800px;
-  margin: 30px auto;
+  max-width: 900px;
+  margin: 20px auto;
   padding: 20px;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: Arial, sans-serif;
   background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 24px;
-  font-size: 26px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 form {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-bottom: 20px;
 }
-
 form div {
   display: flex;
   flex-direction: column;
 }
+.full-width {
+  grid-column: span 2;
+}
 
 label {
   margin-bottom: 6px;
-  font-weight: 600;
-  color: #333;
+  font-weight: bold;
 }
 
 input[type="text"],
 input[type="number"],
 input[type="date"] {
   padding: 8px;
-  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  border-radius: 4px;
 }
 
 button {
-  grid-column: span 2;
-  padding: 10px 16px;
-  font-weight: 600;
+  padding: 10px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
+  font-weight: bold;
   cursor: pointer;
-  transition: 0.2s all ease;
+}
+button:disabled {
+  background-color: #cccccc;
 }
 
-button:hover {
-  background-color: #0056b3;
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 16px;
+  margin-top: 10px;
 }
-
-table th,
-table td {
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
   text-align: left;
-  padding: 12px;
-  border-bottom: 1px solid #ddd;
 }
-
-table th {
-  background-color: #f9f9f9;
-  font-weight: 600;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 12px;
-  margin-top: 20px;
-}
-
-.pagination button {
-  padding: 8px 12px;
-  border: 1px solid #ccc;
-  background-color: #f5f5f5;
-  cursor: pointer;
-  border-radius: 6px;
-}
-
-.pagination button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+th {
+  background-color: #f2f2f2;
 }
 </style>
-
