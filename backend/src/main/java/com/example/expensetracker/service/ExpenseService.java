@@ -4,6 +4,9 @@ import com.example.expensetracker.model.Expense;
 import com.example.expensetracker.repository.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 
@@ -18,6 +21,10 @@ public class ExpenseService {
 
     public List<Expense> getAllExpenses() {
         return expenseRepository.findAll();
+    }
+
+    public Page<Expense> getFilteredExpenses(Specification<Expense> spec, Pageable pageable) {
+        return expenseRepository.findAll(spec, pageable);
     }
 
     public Expense getExpenseById(Long id) {
