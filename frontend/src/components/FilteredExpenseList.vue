@@ -1,57 +1,65 @@
 <template>
-  <div class="container">
-    <h2>Filtered Expenses</h2>
+  <div class="app-bg">
+    <div class="container">
+      <h2>Filtered Expenses</h2>
 
-    <form @submit.prevent="fetchExpenses">
-      <div>
-        <label>Category:</label>
-        <input v-model="filters.category" type="text" />
-      </div>
-      <div>
-        <label>Min Amount:</label>
-        <input v-model.number="filters.minAmount" type="number" />
-      </div>
-      <div>
-        <label>Max Amount:</label>
-        <input v-model.number="filters.maxAmount" type="number" />
-      </div>
-      <div>
-        <label>Start Date:</label>
-        <input v-model="filters.startDate" type="date" />
-      </div>
-      <div>
-        <label>End Date:</label>
-        <input v-model="filters.endDate" type="date" />
-      </div>
-      <div class="full-width">
-        <button type="submit">Apply Filters</button>
-      </div>
-    </form>
+      <form @submit.prevent="fetchExpenses">
+        <div>
+          <label>Category:</label>
+          <select v-model="filters.category">
+            <option value="">All</option>
+            <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
+          </select>
+        </div>
+        <div class="slider-container">
+          <label>Max Amount: ${{ filters.maxAmount }}</label>
+          <input
+            type="range"
+            v-model.number="filters.maxAmount"
+            :min="amountRange.min"
+            :max="amountRange.max"
+            step="1"
+          />
+        </div>
+        <div>
+          <label>Start Date:</label>
+          <input v-model="filters.startDate" type="date" />
+        </div>
+        <div>
+          <label>End Date:</label>
+          <input v-model="filters.endDate" type="date" />
+        </div>
+        <div class="full-width">
+          <button type="submit">Apply Filters</button>
+          <button type="button" @click="resetFilters" class="reset-btn">Reset Filters</button>
+        </div>
+      </form>
 
-    <table v-if="expenses.length > 0">
-      <thead>
-        <tr>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Date</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="expense in expenses" :key="expense.id">
-          <td>{{ expense.description }}</td>
-          <td>{{ expense.category }}</td>
-          <td>${{ expense.amount.toFixed(2) }}</td>
-          <td>{{ formatDate(expense.date) }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <p v-else>No results found.</p>
+      <table v-if="expenses.length > 0">
+        <thead>
+          <tr>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="expense in expenses" :key="expense.id">
+            <td>{{ expense.description }}</td>
+            <td>{{ expense.category }}</td>
+            <td>${{ expense.amount.toFixed(2) }}</td>
+            <td>{{ formatDate(expense.date) }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p v-else>No results found.</p>
 
-    <div class="pagination">
-      <button @click="prevPage" :disabled="page === 0">Previous</button>
-      <span>Page {{ page + 1 }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="page + 1 >= totalPages">Next</button>
+      <div class="pagination">
+        <button @click="prevPage" :disabled="page === 0">Previous</button>
+        <span>Page {{ page + 1 }} of {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="page + 1 >= totalPages">Next</button>
+      </div>
     </div>
   </div>
 </template>
@@ -62,15 +70,19 @@ export default {
     return {
       filters: {
         category: '',
-        minAmount: '',
-        maxAmount: '',
+        maxAmount: 1000,
         startDate: '',
         endDate: ''
+      },
+      amountRange: {
+        min: 0,
+        max: 1000
       },
       expenses: [],
       page: 0,
       size: 5,
-      totalPages: 0
+      totalPages: 0,
+      categories: ["Travel", "Food", "Entertainment", "Transport", "Others"]
     };
   },
   methods: {
@@ -92,6 +104,16 @@ export default {
       this.expenses = data.expenses;
       this.totalPages = data.totalPages;
     },
+    resetFilters() {
+      this.filters = {
+        category: '',
+        maxAmount: 1000,
+        startDate: '',
+        endDate: ''
+      };
+      this.page = 0;
+      this.fetchExpenses();
+    },
     nextPage() {
       if (this.page + 1 < this.totalPages) {
         this.page++;
@@ -112,9 +134,15 @@ export default {
 </script>
 
 <style scoped>
+.app-bg {
+  background-color: #f2f2f2;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
 .container {
   max-width: 900px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 20px;
   font-family: Arial, sans-serif;
   background-color: #fff;
@@ -134,6 +162,8 @@ form div {
 }
 .full-width {
   grid-column: span 2;
+  display: flex;
+  gap: 10px;
 }
 
 label {
@@ -141,12 +171,15 @@ label {
   font-weight: bold;
 }
 
-input[type="text"],
-input[type="number"],
-input[type="date"] {
+input,
+select {
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
+}
+
+.slider-container input[type=range] {
+  margin: 5px 0;
 }
 
 button {
@@ -160,6 +193,10 @@ button {
 }
 button:disabled {
   background-color: #cccccc;
+}
+
+.reset-btn {
+  background-color: #6c757d;
 }
 
 .pagination {
