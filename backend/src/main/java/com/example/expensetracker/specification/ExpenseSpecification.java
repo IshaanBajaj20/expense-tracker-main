@@ -20,6 +20,8 @@ public class ExpenseSpecification {
         return (root, query, cb) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.isFalse(root.get("deleted")));
+
             if (category != null && !category.isEmpty()) {
                 predicates.add(cb.equal(root.get("category"), category));
             }

@@ -30,6 +30,12 @@ public class Expense {
     @NotBlank(message = "Category is required")
     private String category;
 
+    private boolean deleted = false;
+
+    private boolean archived = false;
+
+    private LocalDate archivedDate;
+
     public Expense() {
     }
 
@@ -78,5 +84,21 @@ public class Expense {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public LocalDate getArchivedDate() {
+        return archivedDate;
+    }
+
+    public void setArchivedDate(LocalDate archivedDate) {
+        this.archivedDate = archivedDate;
     }
 }
