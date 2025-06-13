@@ -10,6 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
+/**
+ * Represents an expense record with validation.
+ */
 @Entity
 public class Expense {
     @Id
@@ -30,10 +33,13 @@ public class Expense {
     @NotBlank(message = "Category is required")
     private String category;
 
+    // Indicates if the expense is deleted
     private boolean deleted = false;
 
+    // Indicates if the expense is archived
     private boolean archived = false;
 
+    // Date when the expense was archived
     private LocalDate archivedDate;
 
     public Expense() {
@@ -100,5 +106,13 @@ public class Expense {
 
     public void setArchivedDate(LocalDate archivedDate) {
         this.archivedDate = archivedDate;
+    }
+
+    public boolean isArchived() {
+        return archived;
+    }
+
+    public void setArchived(boolean archived) {
+        this.archived = archived;
     }
 }

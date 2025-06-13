@@ -18,12 +18,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST Controller for managing Expense-related operations.
+ */
 @RestController
 @RequestMapping("/api/expenses")
 public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
 
+    /**
+     * Retrieves a paginated and filtered list of expenses based on query parameters.
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getFilteredExpenses(
             @RequestParam(required = false) String category,
@@ -50,27 +56,42 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * Retrieves an expense by its ID.
+     */
     @GetMapping("/{id}")
     public Expense getExpenseById(@PathVariable Long id) {
         return expenseService.getExpenseById(id);
     }
 
+    /**
+     * Creates a new expense.
+     */
     @PostMapping
     public Expense createExpense(@Valid @RequestBody Expense expense) {
         return expenseService.createExpense(expense);
     }
 
+    /**
+     * Updates an existing expense by its ID.
+     */
     @PutMapping("/{id}")
     public Expense updateExpense(@PathVariable Long id, @Valid @RequestBody Expense expense) {
         return expenseService.updateExpense(id, expense);
     }
 
+    /**
+     * Archives (soft-deletes) an expense.
+     */
     @DeleteMapping("/archive/{id}")
     public ResponseEntity<Void> archiveExpense(@PathVariable Long id) {
         expenseService.softDeleteExpense(id);
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Retrieves a list of archived expenses.
+     */
     @GetMapping("/archived")
     public ResponseEntity<Map<String, Object>> getArchivedExpenses(
             @RequestParam(defaultValue = "0") int page,
@@ -87,7 +108,9 @@ public class ExpenseController {
         return ResponseEntity.ok(response);
     }
 
-
+    /**
+     * Permanently deletes an expense.
+     */
     @DeleteMapping("/{id}")
     public void deleteExpense(@PathVariable Long id) {
         expenseService.deleteExpense(id);

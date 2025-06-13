@@ -8,12 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 
+/**
+ * Loads initial seed data into the database at application startup if the table is empty.
+ */
 @Component
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
     private ExpenseRepository expenseRepository;
 
+    /**
+     * Populates the database with default expenses only if the repository is initially empty.
+     *
+     * @param args startup arguments
+     */
     @Override
     public void run(String... args) {
         if (expenseRepository.count() == 0) {
