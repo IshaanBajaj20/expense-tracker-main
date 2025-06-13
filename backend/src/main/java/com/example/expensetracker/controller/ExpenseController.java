@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -63,6 +64,29 @@ public class ExpenseController {
     public Expense updateExpense(@PathVariable Long id, @Valid @RequestBody Expense expense) {
         return expenseService.updateExpense(id, expense);
     }
+
+    @DeleteMapping("/archive/{id}")
+    public ResponseEntity<Void> archiveExpense(@PathVariable Long id) {
+        expenseService.softDeleteExpense(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/archived")
+    public ResponseEntity<Map<String, Object>> getArchivedExpenses(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        List<Expense> archivedList = expenseService.getArchivedExpenses();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("expenses", archivedList);
+        response.put("totalItems", archivedList.size());
+        response.put("totalPages", 1);
+        response.put("currentPage", 0);
+
+        return ResponseEntity.ok(response);
+    }
+
 
     @DeleteMapping("/{id}")
     public void deleteExpense(@PathVariable Long id) {

@@ -1,11 +1,13 @@
 com/example/expensetracker/exception/GlobalExceptionHandler.class
 com/example/expensetracker/config/SecurityConfig.class
+com/example/expensetracker/config/WebConfig.class
+com/example/expensetracker/DataLoader.class
+com/example/expensetracker/repository/ExpenseRepository.class
+com/example/expensetracker/service/ExpenseService.class
+com/example/expensetracker/scheduler/ExpenseArchiveScheduler.class
 com/example/expensetracker/model/Expense.class
 com/example/expensetracker/controller/ExpenseController.class
 com/example/expensetracker/specification/ExpenseSpecification.class
-com/example/expensetracker/config/WebConfig.class
 com/example/expensetracker/ExpenseTrackerApplication.class
-com/example/expensetracker/DataLoader.class
-com/example/expensetracker/repository/ExpenseRepository.class
+com/example/expensetracker/config/SchedulerConfig.class
 com/example/expensetracker/config/WebConfig$1.class
-com/example/expensetracker/service/ExpenseService.class

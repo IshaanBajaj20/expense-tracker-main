@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ExpenseService {
@@ -45,4 +47,28 @@ public class ExpenseService {
     public void deleteExpense(Long id) {
         expenseRepository.deleteById(id);
     }
+
+    public void softDeleteExpense(Long id) {
+        Expense expense = getExpenseById(id);
+        expense.setDeleted(true);
+        expenseRepository.save(expense);
+    }
+
+    public List<Expense> getArchivedExpenses() {
+        return expenseRepository.findByDeletedTrue();
+    }
+
+    public void archiveOldExpenses() {
+        LocalDate cutoff = LocalDate.now().minusDays(30);
+        List<Expense> oldExpenses = expenseRepository.findByDeletedFalse().stream()
+                .filter(exp -> exp.getDate().isBefore(cutoff))
+                .collect(Collectors.toList());
+
+        for (Expense exp : oldExpenses) {
+            exp.setDeleted(true);
+            exp.setArchivedDate(LocalDate.now());
+        }
+        expenseRepository.saveAll(oldExpenses);
+    }
+
 }
