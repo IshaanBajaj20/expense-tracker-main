@@ -1,3 +1,4 @@
+com/example/expensetracker/exception/GlobalExceptionHandler.class
 com/example/expensetracker/config/SecurityConfig.class
 com/example/expensetracker/model/Expense.class
 com/example/expensetracker/controller/ExpenseController.class

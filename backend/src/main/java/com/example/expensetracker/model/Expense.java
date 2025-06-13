@@ -4,6 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 @Entity
@@ -11,9 +15,19 @@ public class Expense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "Description is required")
     private String description;
+
+    @NotNull(message = "Amount is required")
+    @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
     private Double amount;
+
+    @NotNull(message = "Date is required")
+    @PastOrPresent(message = "Date must be in the past or present")
     private LocalDate date;
+
+    @NotBlank(message = "Category is required")
     private String category;
 
     public Expense() {

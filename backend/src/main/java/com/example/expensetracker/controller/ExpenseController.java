@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,12 +55,12 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public Expense createExpense(@RequestBody Expense expense) {
+    public Expense createExpense(@Valid @RequestBody Expense expense) {
         return expenseService.createExpense(expense);
     }
 
     @PutMapping("/{id}")
-    public Expense updateExpense(@PathVariable Long id, @RequestBody Expense expense) {
+    public Expense updateExpense(@PathVariable Long id, @Valid @RequestBody Expense expense) {
         return expenseService.updateExpense(id, expense);
     }
 
